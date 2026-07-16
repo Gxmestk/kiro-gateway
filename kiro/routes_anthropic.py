@@ -157,7 +157,24 @@ async def messages(
     from kiro.truncation_state import get_tool_truncation, get_content_truncation
     from kiro.truncation_recovery import generate_truncation_tool_result, generate_truncation_user_message
     from kiro.models_anthropic import AnthropicMessage
-    
+
+    # Claude Code injects system-role messages inline in the messages array.
+    # Hoist them into the top-level `system` field (which the converter expects),
+    # mirroring how the OpenAI path extracts system messages. Without this the
+    # Anthropic schema (role: user|assistant) rejects the request with a 422.
+    inline_system = [m for m in request_data.messages if m.role == "system"]
+    if inline_system:
+        from kiro.converters_anthropic import convert_anthropic_content_to_text, extract_system_prompt
+        inline_text = "\n\n".join(
+            convert_anthropic_content_to_text(m.content) for m in inline_system
+        ).strip()
+        existing_text = extract_system_prompt(request_data.system) or ""
+        merged = (inline_text + "\n\n" + existing_text).strip() if existing_text else inline_text
+        if merged:
+            request_data.system = merged
+        request_data.messages = [m for m in request_data.messages if m.role != "system"]
+        logger.info(f"Hoisted {len(inline_system)} inline system message(s) into top-level system prompt")
+
     modified_messages = []
     tool_results_modified = 0
     content_notices_added = 0
