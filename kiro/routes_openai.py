@@ -38,6 +38,7 @@ from kiro.config import (
     PROXY_API_KEY,
     APP_VERSION,
     PROFILE_ARN,
+    MODEL_ALIASES,
 )
 from kiro.models_openai import (
     OpenAIModel,
@@ -144,16 +145,42 @@ async def get_models(request: Request):
         account = request.app.state.account_manager.get_first_account()
         available_model_ids = account.model_resolver.get_available_models()
     
-    # Build OpenAI-compatible model list
-    openai_models = [
-        OpenAIModel(
+    # Metadata (description / credit cost / context window) comes from the first
+    # account's model cache, which is populated from FALLBACK_MODELS at startup.
+    first_account = request.app.state.account_manager.get_first_account()
+    cache = first_account.model_cache if first_account else None
+
+    def _owner_for(mid: str) -> str:
+        m = mid.lower()
+        if m.startswith("gpt"):
+            return "openai"
+        if m.startswith("claude"):
+            return "anthropic"
+        if m.startswith("glm"):
+            return "zhipu"
+        if m.startswith("deepseek"):
+            return "deepseek"
+        if m.startswith("minimax"):
+            return "minimax"
+        if m.startswith("qwen"):
+            return "alibaba"
+        return "kiro"
+
+    openai_models = []
+    for model_id in available_model_ids:
+        info = (cache.get(model_id) if cache else None) or {}
+        # Follow alias if the display id differs from the cache key (e.g. auto-kiro -> auto)
+        if not info and model_id in MODEL_ALIASES:
+            info = (cache.get(MODEL_ALIASES[model_id]) if cache else None) or {}
+        token_limits = info.get("tokenLimits") or {}
+        openai_models.append(OpenAIModel(
             id=model_id,
-            owned_by="anthropic",
-            description="Claude model via Kiro API"
-        )
-        for model_id in available_model_ids
-    ]
-    
+            owned_by=_owner_for(model_id),
+            description=info.get("description") or "Model via Kiro API",
+            credit_multiplier=info.get("creditMultiplier"),
+            context_window=token_limits.get("maxInputTokens"),
+        ))
+
     return ModelList(data=openai_models)
 
 

@@ -27,7 +27,7 @@ Loads environment variables and provides typed access to them.
 import os
 import re
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 from dotenv import load_dotenv
 
 # Load environment variables
@@ -273,20 +273,28 @@ HIDDEN_FROM_LIST: List[str] = ["auto"]
 # - Some models may not be available on your Kiro plan (e.g., Opus on free tier)
 # - New models released after this version won't appear here
 # - Update gateway regularly to get the latest model list
-FALLBACK_MODELS: List[Dict[str, str]] = [
-    {"modelId": "auto"},
-    {"modelId": "claude-sonnet-4"},
-    {"modelId": "claude-sonnet-4.5"},
-    {"modelId": "claude-sonnet-4.6"},
-    {"modelId": "claude-haiku-4.5"},
-    {"modelId": "claude-opus-4.5"},
-    {"modelId": "claude-opus-4.6"},
-    {"modelId": "claude-opus-4.7"},
-    {"modelId": "deepseek-3.2"},
-    {"modelId": "glm-5"},
-    {"modelId": "minimax-m2.1"},
-    {"modelId": "minimax-m2.5"},
-    {"modelId": "qwen3-coder-next"},
+# Static fallback model list (used for the runtime.kiro.dev endpoint, which has
+# no ListAvailableModels API). Enriched with Kiro credit multiplier and context
+# window where known, mirroring `kiro-cli chat --list-models`.
+FALLBACK_MODELS: List[Dict[str, Any]] = [
+    {"modelId": "auto",             "creditMultiplier": 1.00, "description": "Models chosen by task for optimal usage and consistent quality"},
+    {"modelId": "claude-sonnet-5",  "creditMultiplier": 1.30, "description": "Experimental preview of Claude Sonnet 5 model with 1M context window", "tokenLimits": {"maxInputTokens": 1000000}},
+    {"modelId": "claude-opus-4.8",  "creditMultiplier": 2.20, "description": "Claude Opus 4.8 model with 1M context window", "tokenLimits": {"maxInputTokens": 1000000}},
+    {"modelId": "gpt-5.6-sol",      "creditMultiplier": 2.40, "description": "Experimental preview of OpenAI GPT 5.6 Sol with 272k context window", "tokenLimits": {"maxInputTokens": 272000}},
+    {"modelId": "gpt-5.6-terra",    "creditMultiplier": 1.20, "description": "Experimental preview of OpenAI GPT 5.6 Terra with 272k context window", "tokenLimits": {"maxInputTokens": 272000}},
+    {"modelId": "gpt-5.6-luna",     "creditMultiplier": 0.60, "description": "Experimental preview of OpenAI GPT 5.6 Luna with 272k context window", "tokenLimits": {"maxInputTokens": 272000}},
+    {"modelId": "claude-opus-4.7",  "creditMultiplier": 2.20, "description": "Claude Opus 4.7 model with 1M context window", "tokenLimits": {"maxInputTokens": 1000000}},
+    {"modelId": "claude-opus-4.6",  "creditMultiplier": 2.20, "description": "Claude Opus 4.6 model with 1M context window", "tokenLimits": {"maxInputTokens": 1000000}},
+    {"modelId": "claude-sonnet-4.6","creditMultiplier": 1.30, "description": "Claude Sonnet 4.6 model with 1M context window", "tokenLimits": {"maxInputTokens": 1000000}},
+    {"modelId": "claude-opus-4.5",  "creditMultiplier": 2.20, "description": "Claude Opus 4.5 model"},
+    {"modelId": "claude-sonnet-4.5","creditMultiplier": 1.30, "description": "Claude Sonnet 4.5 model"},
+    {"modelId": "claude-sonnet-4",  "creditMultiplier": 1.30, "description": "Hybrid reasoning and coding for regular use"},
+    {"modelId": "claude-haiku-4.5", "creditMultiplier": 0.40, "description": "The latest Claude Haiku model"},
+    {"modelId": "deepseek-3.2",     "creditMultiplier": 0.25, "description": "Experimental preview of DeepSeek V3.2"},
+    {"modelId": "minimax-m2.5",     "creditMultiplier": 0.25, "description": "MiniMax M2.5 model"},
+    {"modelId": "minimax-m2.1",     "creditMultiplier": 0.15, "description": "Experimental preview of MiniMax M2.1"},
+    {"modelId": "glm-5",            "creditMultiplier": 0.50, "description": "GLM-5 model"},
+    {"modelId": "qwen3-coder-next", "creditMultiplier": 0.05, "description": "Experimental preview of Qwen3 Coder Next"},
 ]
 
 # ==================================================================================================

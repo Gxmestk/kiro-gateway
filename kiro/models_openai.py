@@ -45,6 +45,9 @@ class OpenAIModel(BaseModel):
     created: int = Field(default_factory=lambda: int(time.time()))
     owned_by: str = "anthropic"
     description: Optional[str] = None
+    # Kiro-specific metadata (non-standard OpenAI fields, surfaced for clients)
+    credit_multiplier: Optional[float] = Field(default=None, description="Kiro credit cost multiplier (1.0 = base rate)")
+    context_window: Optional[int] = Field(default=None, description="Maximum context window in tokens")
 
 
 class ModelList(BaseModel):
