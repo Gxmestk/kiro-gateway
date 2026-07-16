@@ -21,29 +21,39 @@ Made with ❤️ by [@Jwadow](https://github.com/jwadow)
 
 ---
 
-## 🤖 Available Models (Free List)
+## 🤖 Available Models
 
-> ⚠️ **Important:** Model availability depends on your Kiro tier (free/paid). The gateway provides access to whatever models are available in your IDE or CLI based on your subscription. The list below shows models commonly available on the **free tier**.
+> ⚠️ **Important:** Model availability depends on your Kiro tier (free/paid) — the gateway serves whatever your IDE/CLI account is entitled to. Run `kiro-cli chat --list-models` for the authoritative list. **Credits** is the Kiro multiplier (1.0× = base).
 
-> 🔒 **Claude Opus 4.5** was removed from the free tier on January 17, 2026. It may be available on paid tiers — check your IDE/CLI model list.
+### OpenAI GPT-5.6 *(added 2026-07-14)*
+| Model | Credits | Context | Notes |
+|---|---|---|---|
+| `gpt-5.6-sol` | 2.40× | 272k | Flagship — strongest, most expensive |
+| `gpt-5.6-terra` | 1.20× | 272k | Balanced GPT-5.6 |
+| `gpt-5.6-luna` | 0.60× | 272k | Cheapest GPT-5.6 |
 
-🚀 **Claude Sonnet 4.5** — Balanced performance. Great for coding, writing, and general-purpose tasks.
+### Anthropic Claude
+| Model | Credits | Context |
+|---|---|---|
+| `claude-opus-4.8` / `4.7` / `4.6` | 2.20× | 1M |
+| `claude-opus-4.5` | 2.20× | — |
+| `claude-sonnet-5` | 1.30× | 1M *(preview)* |
+| `claude-sonnet-4.6` / `4.5` / `4` | 1.30× | 1M / — / — |
+| `claude-haiku-4.5` | 0.40× | — *(fast/background)* |
 
-⚡ **Claude Haiku 4.5** — Lightning fast. Perfect for quick responses, simple tasks, and chat.
+> 🔒 `claude-opus-4.5` was removed from the **free tier** on 2026-01-17; it and the newer Opus/Sonnet/GPT-5.6 models are typically paid-tier — check your model list.
 
-📦 **Claude Sonnet 4** — Previous generation. Still powerful and reliable for most use cases.
+### Open models
+| Model | Credits | Notes |
+|---|---|---|
+| `glm-5` | 0.50× | GLM-5 (744B, 40B active) |
+| `deepseek-3.2` | 0.25× | DeepSeek V3.2 (685B, 37B active) |
+| `minimax-m2.5` / `m2.1` | 0.25× / 0.15× | MiniMax (230B, 10B active) |
+| `qwen3-coder-next` | 0.05× | Qwen3 Coder (80B, 3B active) — cheapest |
 
-💤 **GLM-5** — Open MoE model (744B params, 40B active). Advanced model for complex systems engineering and long-horizon agentic tasks.
+`auto` (1.00×) lets Kiro pick the best model per task.
 
-🐋 **DeepSeek-V3.2** — Open MoE model (685B params, 37B active). Balanced performance for coding, reasoning, and general tasks.
-
-🧩 **MiniMax M2.5** — Open MoE model (230B params, 10B active). Enhanced version with improved reasoning and task handling.
-
-🧩 **MiniMax M2.1** — Open MoE model (230B params, 10B active). Great for complex tasks, planning, and multi-step workflows.
-
-🤖 **Qwen3-Coder-Next** — Open MoE model (80B params, 3B active). Coding-focused. Excellent for development and large projects.
-
-> 💡 **Smart Model Resolution:** Use any model name format — `claude-sonnet-4-5`, `claude-sonnet-4.5`, or even versioned names like `claude-sonnet-4-5-20250929`. The gateway normalizes them automatically.
+> 💡 **Smart Model Resolution:** Use any model name format — `claude-sonnet-4-5`, `claude-sonnet-4.5`, or versioned names like `claude-sonnet-4-5-20250929`. The gateway normalizes them automatically.
 
 ---
 
